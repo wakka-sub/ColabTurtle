@@ -65,8 +65,27 @@ svg_lines_string = DEFAULT_SVG_LINES_STRING
 pen_width = DEFAULT_PEN_WIDTH
 turtle_shape = DEFAULT_TURTLE_SHAPE
 
+# バッファリング関連の変数
+buffer_size = 1  # デフォルトは毎回描画
+buffer_count = 0
+
 drawing_window = None
 
+# バッファサイズを設定（n stepごとに描画更新）
+def set_buffer_size(steps):
+    global buffer_size
+    if not isinstance(steps, int):
+        raise ValueError('buffer size must be an integer.')
+    if steps < 1:
+        steps = 1
+    buffer_size = steps
+
+# バッファを強制的にフラッシュ
+def flush_buffer():
+    global buffer_count
+    if drawing_window is not None:
+        drawing_window.update(HTML(_generateSvgDrawing()))
+    buffer_count = 0
 
 # construct the display for turtle
 def initializeTurtle(initial_speed=DEFAULT_SPEED, initial_window_size=DEFAULT_WINDOW_SIZE):
@@ -82,6 +101,7 @@ def initializeTurtle(initial_speed=DEFAULT_SPEED, initial_window_size=DEFAULT_WI
     global svg_lines_string
     global pen_width
     global turtle_shape
+    global buffer_count
 
     if isinstance(initial_speed,int) == False or initial_speed not in range(1, 15):
         raise ValueError('initial_speed must be an integer in interval [1,14]')
@@ -103,6 +123,7 @@ def initializeTurtle(initial_speed=DEFAULT_SPEED, initial_window_size=DEFAULT_WI
     pen_width = DEFAULT_PEN_WIDTH
     turtle_shape = DEFAULT_TURTLE_SHAPE
 
+    buffer_count = 0
     drawing_window = display(HTML(_generateSvgDrawing()), display_id=True)
 
 
@@ -140,10 +161,17 @@ def _generateSvgDrawing():
 
 # helper functions for updating the screen using the latest positions/angles/lines etc.
 def _updateDrawing():
+    global buffer_count
+    
     if drawing_window == None:
         raise AttributeError("Display has not been initialized yet. Call initializeTurtle() before using.")
-    time.sleep(_speedToSec(turtle_speed))
-    drawing_window.update(HTML(_generateSvgDrawing()))
+    
+    buffer_count += 1
+    
+    if buffer_count >= buffer_size:
+        time.sleep(_speedToSec(turtle_speed))
+        drawing_window.update(HTML(_generateSvgDrawing()))
+        buffer_count = 0
 
 
 # helper function for managing any kind of move to a given 'new_pos' and draw lines if pen is down
@@ -498,7 +526,7 @@ def write(obj, **kwargs):
     elif font_type == 'underline':
         style_string += "text-decoration: underline;"
 
-    
+
     svg_lines_string += """<text x="{x}" y="{y}" fill="{fill_color}" text-anchor="{align}" style="{style}">{text}</text>""".format(x=turtle_pos[0], y=turtle_pos[1], text=text, fill_color=pen_color, align=align, style=style_string)
     
     _updateDrawing()
