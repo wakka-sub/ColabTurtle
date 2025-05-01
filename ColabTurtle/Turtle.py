@@ -44,10 +44,10 @@ TURTLE_CIRCLE_SVG_TEMPLATE = """
     """
 
 
-SPEED_TO_SEC_MAP = {1: 1.5, 2: 0.9, 3: 0.7, 4: 0.5, 5: 0.3, 6: 0.18, 7: 0.12, 8: 0.06, 9: 0.04, 10: 0.02, 11: 0.01, 12: 0.001, 13: 0.0001}
+SPEED_TO_SEC_MAP = {1: 1.5, 2: 0.9, 3: 0.7, 4: 0.5, 5: 0.3, 6: 0.18, 7: 0.12, 8: 0.06, 9: 0.04, 10: 0.02, 11: 0.01, 12: 0.001, 13: 0.0001, 14: 0}
 
 
-# helper function that maps [1,13] speed values to ms delays
+# helper function that maps [1,14] speed values to ms delays
 def _speedToSec(speed):
     return SPEED_TO_SEC_MAP[speed]
 
@@ -83,8 +83,8 @@ def initializeTurtle(initial_speed=DEFAULT_SPEED, initial_window_size=DEFAULT_WI
     global pen_width
     global turtle_shape
 
-    if isinstance(initial_speed,int) == False or initial_speed not in range(1, 14):
-        raise ValueError('initial_speed must be an integer in interval [1,13]')
+    if isinstance(initial_speed,int) == False or initial_speed not in range(1, 15):
+        raise ValueError('initial_speed must be an integer in interval [1,14]')
     turtle_speed = initial_speed
 
     if not (isinstance(initial_window_size, tuple) and len(initial_window_size) == 2 and isinstance(
