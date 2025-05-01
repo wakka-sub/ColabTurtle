@@ -102,6 +102,10 @@ def initializeTurtle(initial_speed=DEFAULT_SPEED, initial_window_size=DEFAULT_WI
     global pen_width
     global turtle_shape
     global buffer_count
+    # バッファサイズはリセットしない（現在の値を保持）
+    global buffer_size
+    
+    current_buffer_size = buffer_size  # 現在の値を保存
 
     if isinstance(initial_speed,int) == False or initial_speed not in range(1, 15):
         raise ValueError('initial_speed must be an integer in interval [1,14]')
@@ -122,7 +126,8 @@ def initializeTurtle(initial_speed=DEFAULT_SPEED, initial_window_size=DEFAULT_WI
     svg_lines_string = DEFAULT_SVG_LINES_STRING
     pen_width = DEFAULT_PEN_WIDTH
     turtle_shape = DEFAULT_TURTLE_SHAPE
-
+    
+    buffer_size = current_buffer_size  # 保存した値を復元
     buffer_count = 0
     drawing_window = display(HTML(_generateSvgDrawing()), display_id=True)
 
