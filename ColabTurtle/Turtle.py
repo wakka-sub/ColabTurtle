@@ -65,13 +65,13 @@ svg_lines_string = DEFAULT_SVG_LINES_STRING
 pen_width = DEFAULT_PEN_WIDTH
 turtle_shape = DEFAULT_TURTLE_SHAPE
 
-# バッファリング関連の変数
-buffer_size = 1  # デフォルトは毎回描画
+# 描画が遅すぎるのでバッファリングを追加
+buffer_size = 1
 buffer_count = 0
 
 drawing_window = None
 
-# バッファサイズを設定（n stepごとに描画更新）
+# バッファサイズを設定
 def set_buffer_size(steps):
     global buffer_size
     if not isinstance(steps, int):
@@ -80,7 +80,7 @@ def set_buffer_size(steps):
         steps = 1
     buffer_size = steps
 
-# バッファを強制的にフラッシュ
+# バッファを書き込み
 def flush_buffer():
     global buffer_count
     if drawing_window is not None:
@@ -102,10 +102,9 @@ def initializeTurtle(initial_speed=DEFAULT_SPEED, initial_window_size=DEFAULT_WI
     global pen_width
     global turtle_shape
     global buffer_count
-    # バッファサイズはリセットしない（現在の値を保持）
     global buffer_size
     
-    current_buffer_size = buffer_size  # 現在の値を保存
+    current_buffer_size = buffer_size
 
     if isinstance(initial_speed,int) == False or initial_speed not in range(1, 15):
         raise ValueError('initial_speed must be an integer in interval [1,14]')
@@ -127,7 +126,7 @@ def initializeTurtle(initial_speed=DEFAULT_SPEED, initial_window_size=DEFAULT_WI
     pen_width = DEFAULT_PEN_WIDTH
     turtle_shape = DEFAULT_TURTLE_SHAPE
     
-    buffer_size = current_buffer_size  # 保存した値を復元
+    buffer_size = current_buffer_size
     buffer_count = 0
     drawing_window = display(HTML(_generateSvgDrawing()), display_id=True)
 
